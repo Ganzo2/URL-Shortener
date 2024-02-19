@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: "Goudy Bookletter 1911", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #shortenForm {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label, input, textarea {
+            display: block;
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            resize: vertical;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #shortenedUrls {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #shortenedUrls label {
+            font-weight: bold;
+        }
+        #shortenedUrls a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        #shortenedUrls a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>URL Shortener</h1>
+    <form id="shortenForm">
+        <label for="long_url">Enter URL to shorten:</label><br>
+        <textarea name="long_url" placeholder="Example:https://www.facebook.com/" id="long_url" rows="1" cols="80"></textarea><br>
+        <input type="submit" value="Shorten URLs">
+    </form>
+
+    <div id="shortenedUrls"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#shortenForm').submit(function(event) {
+                event.preventDefault(); 
+
+                var formData = $(this).serialize(); 
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for('index') }}',
+                    data: formData,
+                    success: function(response) {
+                        var shortenedUrl = $('<a>').attr('href', response).text(response);
+                        $(shortenedUrl).attr('target', '_blank'); 
+                        $('#shortenedUrls').empty(); 
+                        $('#shortenedUrls').append("<label>Your Shortened URL: </label>");
+                        $('#shortenedUrls').append(shortenedUrl);
+                        $('#long_url').val('')
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
